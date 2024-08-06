@@ -19,13 +19,13 @@ class Colors:
 class sun:
     def __init__(self, mass,location):
         self.mass = mass
-        self.G = 10
+        self.G = 0.1
         self.location = location
         self.velocity = np.zeros(2)
         self.dt = 0.01
         
     def move(self,plnts):
-        '''if len(plnts) > 0:
+        if len(plnts) > 0:
             F = np.zeros(2)
             for p in plnts:
                 r = np.linalg.norm(self.location - p.location);# print(r)
@@ -36,7 +36,7 @@ class sun:
         else:
             self.velocity = np.zeros(2)
             
-        self.location = self.location + self.velocity*self.dt'''
+        self.location = self.location + self.velocity*self.dt
         pass
         
 class planet:
@@ -44,7 +44,7 @@ class planet:
         self.location = np.array(location)
         self.mass = 50
         self.velocity = np.array(velocity)
-        self.G = 10
+        self.G = 0.1
         self.dt = 0.01
         self.c = Colors()  
         self.color = np.random.randint(10,255,3) #colorArray[np.random.randint(0,len(colorArray))]
@@ -73,7 +73,7 @@ class planetarySystem:
         #Initialize Parameters of the simulation
         self.FrameRate = 120
         self.screenFactor = 10
-        self.sunMass = 1000
+        self.sunMass = 100000
         #---------------------------------------
         
         # Set up colors
@@ -155,6 +155,7 @@ class planetarySystem:
         sunPos = (0,0)
         running = True
         holding = False
+        paused = False
         self.planetArray = []
         self.sunArray = [sun(self.sunMass, np.zeros(2))]
         
@@ -166,6 +167,10 @@ class planetarySystem:
                 if event.type == pygame.QUIT:
                     running = False
                     
+                if event.type == pygame.KEYUP:
+                    if event.key == pygame.K_p:
+                        paused = not paused
+                
                 if event.type == pygame.KEYUP:
                     if event.key == pygame.K_SPACE:
                         self.planetArray.clear()
@@ -196,36 +201,36 @@ class planetarySystem:
                         holding = False
                         
                         
-
+            if not paused:
             # Fill the background with white
-            self.screen.fill(self.color.white)
-            
-            if holding:
-                x, y = pygame.mouse.get_pos()
-                d1 = (pos1[0] - x )
-                d2 = (pos1[1] - y )
+                self.screen.fill(self.color.white)
                 
-                x1 = pos1[0] + d1
-                y1 = pos1[1] + d2
-                pygame.draw.aaline(self.screen, self.color.red, pos1, (x1,y1)  , 1)
-                pygame.draw.circle(self.screen, self.color.red, pos1, 5)
+                if holding:
+                    x, y = pygame.mouse.get_pos()
+                    d1 = (pos1[0] - x )
+                    d2 = (pos1[1] - y )
+                    
+                    x1 = pos1[0] + d1
+                    y1 = pos1[1] + d2
+                    pygame.draw.aaline(self.screen, self.color.red, pos1, (x1,y1)  , 1)
+                    pygame.draw.circle(self.screen, self.color.red, pos1, 5)
 
-            for p in self.planetArray:
-                p.move(self.sunArray)
-                self.drawPlanet(p)
+                for p in self.planetArray:
+                    p.move(self.sunArray)
+                    self.drawPlanet(p)
+                    
+                for s in self.sunArray:
+                    s.move(self.planetArray)
+                    self.drawSuns(s)
+                    
                 
-            for s in self.sunArray:
-                s.move(self.planetArray)
-                self.drawSuns(s)
+                self.drawCount()
                 
-            
-            self.drawCount()
-            
-            # Update the display
-            pygame.display.flip()
-            
-            # Cap the frame rate
-            self.clock.tick(self.FrameRate)
+                # Update the display
+                pygame.display.flip()
+                
+                # Cap the frame rate
+                self.clock.tick(self.FrameRate)
             
         # Quit Pygame
         pygame.quit()
