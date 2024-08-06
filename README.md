@@ -1,4 +1,4 @@
-**FREE INTERACTIVE GRAVITY SIMULATOR WRITTEN IN PYTHON AND PYGAME**
+**INTERACTIVE GRAVITY SIMULATOR WRITTEN IN PYTHON AND PYGAME**
 -----------
 Interactive python based gravity simulator written with Pygame and numpy.
 This system simulates a system of particles revolving around another set of heavier particles.
